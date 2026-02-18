@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DocRevisor · pitch deck</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f4f7fb;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    /* main container – vertical carousel (one card at a time) */
+    .deck {
+      max-width: 900px;
+      width: 100%;
+      background: transparent;
+    }
+
+    /* slide card */
+    .slide-card {
+      background: #ffffff;
+      border-radius: 2.5rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+      padding: 2.5rem;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(230, 240, 255, 0.6);
+      backdrop-filter: blur(2px);
+    }
+
+    /* header line with slide number & title */
+    .slide-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid #eef2f6;
+      padding-bottom: 1.25rem;
+    }
+
+    .slide-num {
+      background: #e6ecf3;
+      color: #1a2639;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+      letter-spacing: 0.3px;
+    }
+
+    .slide-title {
+      font-size: 1.9rem;
+      font-weight: 600;
+      color: #121826;
+      line-height: 1.2;
+    }
+
+    /* main content area */
+    .content {
+      color: #2c3442;
+      font-size: 1.2rem;
+      line-height: 1.6;
+      padding: 0.5rem 0 1rem;
+    }
+
+    /* graphs / forecast styling */
+    .graph-hint {
+      background: #f6f9ff;
+      border-radius: 2rem;
+      padding: 1.6rem 1.8rem;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #405cf5;
+    }
+
+    .forecast-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-top: 1.8rem;
+    }
+
+    .stat-badge {
+      background: white;
+      padding: 1.2rem 1.8rem;
+      border-radius: 1.8rem;
+      box-shadow: 0 6px 14px rgba(0,30,60,0.05);
+      flex: 1 1 200px;
+      border: 1px solid #e2eaf1;
+    }
+
+    .stat-badge span {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #121826;
+    }
+
+    .stat-badge p {
+      color: #576475;
+      font-weight: 500;
+      margin-top: 0.4rem;
+    }
+
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 1.5rem;
+      margin: 1.5rem 0 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .bar-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 70px;
+    }
+
+    .bar {
+      width: 40px;
+      background: #405cf5;
+      border-radius: 20px 20px 8px 8px;
+      margin-bottom: 8px;
+      transition: height 0.2s;
+    }
+
+    .bar-label {
+      color: #405cf5;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .small-note {
+      color: #667c99;
+      font-size: 0.95rem;
+      margin-top: 0.6rem;
+      font-weight: 400;
+    }
+
+    .accent-text {
+      color: #405cf5;
+      font-weight: 600;
+    }
+
+    .pill-highlight {
+      background: #fff2e0;
+      color: #b45b0f;
+      padding: 0.25rem 1rem;
+      border-radius: 30px;
+      display: inline-block;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .flex-row {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .chat-bubble {
+      background: #f0f4fe;
+      padding: 1.4rem 2rem;
+      border-radius: 2rem 2rem 2rem 0.5rem;
+      color: #1f2a44;
+      font-weight: 450;
+      border: 1px solid #d9e2f0;
+      max-width: 400px;
+    }
+
+    /* navigation */
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1.5rem;
+      padding: 0 0.2rem;
+    }
+
+    .nav-arrows {
+      display: flex;
+      gap: 1.2rem;
+    }
+
+    .nav-btn {
+      background: white;
+      border: 1px solid #cfddee;
+      color: #2d3a5e;
+      width: 52px;
+      height: 52px;
+      border-radius: 60px;
+      font-size: 1.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 6px 12px rgba(0,20,40,0.02);
+      font-weight: 300;
+    }
+
+    .nav-btn:hover {
+      background: #f0f5ff;
+      border-color: #405cf5;
+      color: #405cf5;
+      transform: scale(1.02);
+    }
+
+    .dot-indicator {
+      display: flex;
+      gap: 0.6rem;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      background: #d0ddeb;
+      border-radius: 20px;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+
+    .dot.active {
+      background: #405cf5;
+      width: 32px;
+    }
+
+    /* heading 1 */
+    .pitch-heading {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 1.8rem;
+      color: #0b1423;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .pitch-heading::before {
+      content: "▋";
+      color: #405cf5;
+      font-size: 3rem;
+      line-height: 1;
+    }
+
+    /* limited color palette: white background, #405cf5 (blue), #121826 (dark), #eef2f6 (light grey) */
+    hr {
+      border: 1px solid #eef2f6;
+      margin: 1.5rem 0;
+    }
+  </style>
+</head>
+<body>
+<div class="deck">
+  <!-- main heading -->
+  <h1 class="pitch-heading">DocRevisor Pitch Deck</h1>
+
+  <!-- vertical carousel slide container -->
+  <div class="slide-card" id="slideCard">
+    <!-- dynamic content injected via js -->
+  </div>
+
+  <!-- navigation footer -->
+  <div class="nav-controls">
+    <div class="dot-indicator" id="dotContainer"></div>
+    <div class="nav-arrows">
+      <button class="nav-btn" id="prevSlide">←</button>
+      <button class="nav-btn" id="nextSlide">→</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // slide data: number, title, content (html allowed)
+    const slides = [
+      {
+        num: "01",
+        title: "who we are",
+        body: `
+          <p>We are a Warrington based small startup founded by two brothers, through our love for modern creative and high end business solutions, that looks to change or create new innovative ways of conducting and engaging customers through Software as a Service tools deemed necessary and lucrative or ventures. Our love for the business comes from our background as Electrical Engineer, and Computing and Information Systems specialist and an affinity for programming in various languages.</p>
+          <div class="chat-bubble" style="margin-top: 1.8rem;">
+            ⚡ two brothers · engineering + computing · SaaS builders
+          </div>
+        `
+      },
+      {
+        num: "02",
+        title: "where we are now",
+        body: `
+          <p><span class="pill-highlight">pre-seed stage</span> — we are looking for <strong>£50,000 for 5% equity</strong>. We also seek a mentor with business experience to guide us. Currently we have a prototype with working parts, but need to build the full MVP.</p>
+          <div class="flex-row" style="margin-top: 2rem;">
+            <div class="stat-badge"><span>£50k</span> <p>investment · 5%</p></div>
+            <div class="stat-badge"><span>prototype ✓</span> <p>MVP in progress</p></div>
+          </div>
+        `
+      },
+      {
+        num: "03",
+        title: "what you're working on",
+        body: `
+          <p><strong>AI Intelligent Document Processing & Universal Design into CRM Ecosystems</strong> with OCR, CRUD, and Document Remediation linked to CRM. Accessibility features for Braille and regular devices.</p>
+          <div style="background: #f3f6fd; padding: 1.2rem; border-radius: 2rem; margin-top: 1.5rem; display: inline-block;">
+            ⚙️ OCR · CRUD · remediation · Braille support
+          </div>
+        `
+      },
+      {
+        num: "04",
+        title: "where you're stuck",
+        body: `
+          <p>We are stuck at the <span class="accent-text">sourcing for fund stage</span> — bridging the gap between prototype and market-ready MVP.</p>
+          <div style="margin-top: 2rem; color: #405cf5;">⛔ funding bottleneck</div>
+        `
+      },
+      {
+        num: "05",
+        title: "How you can help us move with speed and certainty",
+        body: `
+          <p><strong>Invest today £50,000 for a 5% share</strong> to build the MVP and test market response. Or introduce us to investors aligned with our vision.</p>
+          <!-- forecast & users graph (visual) -->
+          <div class="graph-hint">
+            <div style="display: flex; gap: 0.8rem; align-items: center; margin-bottom: 1rem;">
+              <span style="background: #405cf5; width: 16px; height: 16px; border-radius: 4px;"></span>
+              <span style="font-weight: 600;">📈 feasible forecast · initial investment £50k</span>
+            </div>
+            <div class="bar-chart">
+              <div class="bar-item"><div class="bar" style="height: 30px;"></div><div class="bar-label">Y1</div></div>
+              <div class="bar-item"><div class="bar" style="height: 80px;"></div><div class="bar-label">Y3</div></div>
+              <div class="bar-item"><div class="bar" style="height: 130px;"></div><div class="bar-label">Y5</div></div>
+              <div class="bar-item"><div class="bar" style="height: 180px;"></div><div class="bar-label">Y7</div></div>
+            </div>
+            <div class="forecast-row">
+              <div><span class="accent-text">5000 users</span> <span style="color:#576475;">(year 1)</span></div>
+              <div><span class="accent-text">→ 10M+</span> <span style="color:#576475;">scalable reach</span></div>
+            </div>
+            <div class="small-note">⚡ with £50k MVP & testing, we expect 5k users in year 1, scaling to 10M+ as network effects kick in.</div>
+          </div>
+          <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+            <div class="stat-badge" style="flex:1;"><span>5,000</span><p>users year 1</p></div>
+            <div class="stat-badge" style="flex:1;"><span>10M+</span><p>path to scale</p></div>
+          </div>
+        `
+      }
+    ];
+
+    let currentSlide = 0;   // 0-index
+
+    const slideCard = document.getElementById('slideCard');
+    const dotContainer = document.getElementById('dotContainer');
+    const prevBtn = document.getElementById('prevSlide');
+    const nextBtn = document.getElementById('nextSlide');
+
+    // render slide by index
+    function renderSlide(index) {
+      const slide = slides[index];
+      const headerHtml = `
+        <div class="slide-header">
+          <span class="slide-num">${slide.num}</span>
+          <span class="slide-title">${slide.title}</span>
+        </div>
+      `;
+      const contentHtml = `
+        <div class="content">
+          ${slide.body}
+        </div>
+      `;
+      slideCard.innerHTML = headerHtml + contentHtml;
+
+      // update dot indicators
+      const dots = dotContainer.querySelectorAll('.dot');
+      dots.forEach((dot, i) => {
+        if (i === index) dot.classList.add('active');
+        else dot.classList.remove('active');
+      });
+    }
+
+    // create dot navigation
+    function buildDots() {
+      let dotsHtml = '';
+      slides.forEach((_, i) => {
+        dotsHtml += `<span class="dot ${i === currentSlide ? 'active' : ''}" data-index="${i}"></span>`;
+      });
+      dotContainer.innerHTML = dotsHtml;
+
+      // attach click listeners to dots
+      document.querySelectorAll('.dot').forEach(dot => {
+        dot.addEventListener('click', (e) => {
+          const index = e.target.getAttribute('data-index');
+          if (index !== null) {
+            currentSlide = parseInt(index, 10);
+            renderSlide(currentSlide);
+          }
+        });
+      });
+    }
+
+    // event listeners for arrows
+    prevBtn.addEventListener('click', () => {
+      if (currentSlide > 0) {
+        currentSlide--;
+      } else {
+        currentSlide = slides.length - 1;   // loop to last
+      }
+      renderSlide(currentSlide);
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+      } else {
+        currentSlide = 0;   // loop to first
+      }
+      renderSlide(currentSlide);
+    });
+
+    // initialize
+    buildDots();
+    renderSlide(0);
+
+    // optional: keyboard arrows
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        prevBtn.click();
+        e.preventDefault();
+      } else if (e.key === 'ArrowRight') {
+        nextBtn.click();
+        e.preventDefault();
+      }
+    });
+  })();
+</script>
+
+<!-- extra note to ensure only three colors: white, #405cf5, #121826, and #eef2f6 for borders, all shades within that palette -->
+</body>
+</html>
